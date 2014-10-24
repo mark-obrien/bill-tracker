@@ -1,0 +1,49 @@
+<?php 
+$title = 'Bill Tracker';
+$this->headTitle($title);
+?>
+<div class="well well-lg clearfix">
+    <h1 class="pull-left"><?php echo $this->escapeHtml($title); ?></h1>
+    <a href="<?php echo $this->url('bill', array('action'=>'add'));?>" class="btn btn-primary btn-lg pull-right voffset5">Add new bill</a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Creditor</th>
+                <th>Type</th>
+                <th>Monthly Payment</th>
+                <th>Last Payment</th>
+                <th>Balance</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <?php foreach($bills as $bill) :
+            $latest_payment = (is_object($bill->get_latest_payment())) ? $bill->get_latest_payment()->date->format('m/d/Y') : "No Payment Recorded";
+            $running_balance = (is_object($bill->get_latest_payment())) ? $bill->get_latest_payment()->running_balance : $bill->balance;
+        ?>
+        <tr>
+            <td><a target="_blank" href="<?php echo $bill->creditor_url; ?>"><?php echo $bill->creditor;?></a></td>
+            <td><?php echo $bill->type;?></td>
+            <td><?php echo "$".$bill->m_payment; ?></td>
+            <td class="<?php echo $bill->get_latest_payment_class(); ?>"><?php echo $latest_payment; ?></td>
+            <td><?php echo $running_balance; ?></td>
+            <td>
+                <div class="dropdown">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">
+                        Action
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo $this->url('bill',array('action'=>'edit', 'id' => $bill->id));?>">Edit</a></li>
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo $this->url('bill',array('action'=>'delete', 'id' => $bill->id));?>">Delete</a></li>
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo $this->url('bill' ,array('action'=>'payment', 'id' => $bill->id));?>">Payment</a></li>
+                        <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo $this->url('bill' ,array('action'=>'payment-history', 'id' => $bill->id));?>">Payment History</a></li>
+                    </ul>
+                </div>
+            </td>
+        </tr>
+        <?php endforeach; ?>
+    </table>
+</div>

@@ -1,0 +1,28 @@
+<?php
+$title = $bill->creditor . ' Payment History';
+$this->headTitle($title);
+$payments = $bill->get_payments();
+?>
+
+<div class="well well-lg clearfix">
+    <h1 class="pull-left"><?php echo $title; ?></h1>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th>Payment Amount</th>
+            <th>Balance</th>
+        </tr>
+        </thead>
+            <?php foreach($payments as $payment) { ?>
+                <tr>
+                    <td><?php echo $payment->date->format('m/d/Y'); ?></td>
+                    <td><?php echo "$".$payment->amount; ?></td>
+                    <td><?php echo "$".$payment->running_balance; ?></td>
+                </tr>
+            <?php } ?>
+    </table>
+</div>

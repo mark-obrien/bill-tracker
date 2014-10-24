@@ -1,0 +1,35 @@
+<?php
+$flash = $this->flashMessenger();
+$flash->setMessageOpenFormat('<div%s>
+<button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+    &times;
+</button>
+<ul><li>'
+)
+    ->setMessageSeparatorString('</li><li>')
+    ->setMessageCloseString('</li></ul></div>');
+
+if ($flash->hasCurrentMessages() ||
+    $flash->hasCurrentInfoMessages() ||
+    $flash->hasCurrentSuccessMessages() ||
+    $flash->hasCurrentErrorMessages() ||
+    $flash->hasCurrentWarningMessages()
+){
+    echo $flash->renderCurrent('error',   array('alert', 'alert-dismissable', 'alert-danger'));
+    echo $flash->renderCurrent('info',    array('alert', 'alert-dismissable', 'alert-info'));
+    echo $flash->renderCurrent('default', array('alert', 'alert-dismissable', 'alert-warning'));
+    echo $flash->renderCurrent('warning', array('alert', 'alert-dismissable', 'alert-warning'));
+    echo $flash->renderCurrent('success', array('alert', 'alert-dismissable', 'alert-success'));
+    $flash->clearCurrentMessagesFromNamespace(\Zend\Mvc\Controller\Plugin\FlashMessenger::NAMESPACE_DEFAULT);
+    $flash->clearCurrentMessagesFromNamespace(\Zend\Mvc\Controller\Plugin\FlashMessenger::NAMESPACE_ERROR);
+    $flash->clearCurrentMessagesFromNamespace(\Zend\Mvc\Controller\Plugin\FlashMessenger::NAMESPACE_INFO);
+    $flash->clearCurrentMessagesFromNamespace(\Zend\Mvc\Controller\Plugin\FlashMessenger::NAMESPACE_SUCCESS);
+    $flash->clearCurrentMessagesFromNamespace(\Zend\Mvc\Controller\Plugin\FlashMessenger::NAMESPACE_WARNING);
+} else {
+    echo $flash->render('error',   array('alert', 'alert-dismissable', 'alert-danger'));
+    echo $flash->render('info',    array('alert', 'alert-dismissable', 'alert-info'));
+    echo $flash->render('default', array('alert', 'alert-dismissable', 'alert-warning'));
+    echo $flash->render('warning', array('alert', 'alert-dismissable', 'alert-warning'));
+    echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-success'));
+}
+?>

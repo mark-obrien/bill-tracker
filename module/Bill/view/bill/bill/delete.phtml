@@ -1,0 +1,23 @@
+<?php
+$title = 'Delete bill';
+$this->headTitle($title);
+?>
+<div class="well well-lg clearfix">
+    <h1 class="pull-left"><?php echo $title; ?></h1>
+</div>
+<div class="panel panel-danger">
+    <div class="panel-heading">
+        <h3 class="panel-title">Are you sure that you want to delete <?php echo $bill->creditor; ?></h3>
+    </div>
+    <div class="panel-body">
+        <?php $url = $this->url('bill', array('action' => 'delete', 'id'=>$this->id)); ?>
+        <form action="<?php echo $url; ?>" method="post">
+            <div>
+                <input type="hidden" name="id" value="<?php echo (int)$bill->id; ?>" />
+                <input class="btn btn-default" type="submit" name="del" value="Yes" />
+                <input class="btn btn-default" type="submit" name="del" value="No" />
+            </div>
+        </form>
+    </div>
+</div>
+
