@@ -51,8 +51,5 @@ return array(
         'template_path_stack' => array(
             'bill' => __DIR__ . '/../view',
         ),
-        'strategies' => array(
-            'ViewJsonStrategy',
-        ),
     ),
 );

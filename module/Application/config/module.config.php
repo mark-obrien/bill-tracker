@@ -13,10 +13,7 @@ return array(
                 )
             )
         )
-    ),
-    'data-fixture' => array(
-        'Application_fixture' => __DIR__ . '/../src/Application/Fixture',
-    ),
+    ), 
     'router' => array(
         'routes' => array(
             'home' => array(
@@ -24,22 +21,8 @@ return array(
                 'options' => array(
                     'route'    => '/',
                     'defaults' => array(
-                        'controller' => 'Application\Controller\Index',
+                        'controller' => 'Bill\Controller\Bill',
                         'action'     => 'index',
-                    ),
-                ),
-            ),
-            'Application\account' => array(
-                'type' => 'segment',
-                'options' => array(
-                    'route' => '/account[/:action][/:id]',
-                    'constraints' => array(
-                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
-                        'id' => '[0-9]+',
-                    ),
-                    'defaults' => array(
-                        'controller' => 'Application\Controller\Account',
-                        'action' => 'login',
                     ),
                 ),
             ),
@@ -88,8 +71,7 @@ return array(
     ),
     'controllers' => array(
         'invokables' => array(
-            'Application\Controller\Index'   => 'Application\Controller\IndexController',
-            'Application\Controller\Account' => 'Application\Controller\AccountController',
+            'Application\Controller\Index' => 'Application\Controller\IndexController'
         ),
     ),
     'view_manager' => array(
