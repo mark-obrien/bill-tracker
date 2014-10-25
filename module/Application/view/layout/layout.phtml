@@ -10,86 +10,42 @@
     <!-- Le styles -->
     <?php echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/images/favicon.ico'))
                     ->appendStylesheet($this->basePath() . '/css/bootstrap.min.css')
-                    ->appendStylesheet($this->basePath() . '/css/bootstrap-theme.min.css')
+                    ->appendStylesheet($this->basePath() . '/css/plugins/metisMenu/metisMenu.min.css')
+                    ->appendStylesheet($this->basePath() . '/css/plugins/timeline.css')
+                    ->appendStylesheet($this->basePath() . '/css/plugins/morris.css')
+                    ->appendStylesheet($this->basePath() . '/css/sb-admin-2.css')
+                    ->appendStylesheet($this->basePath() . '/font-awesome-4.1.0/css/font-awesome.min.css')
                     ->appendStylesheet($this->basePath() . '/css/style.css') ?>
   </head>
 
   <body>
 
-  <nav class="navbar navbar-default" role="navigation">
-      <div class="container-fluid">
-          <!-- Brand and toggle get grouped for better mobile display -->
-          <div class="navbar-header">
-              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                  <span class="sr-only">Toggle navigation</span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-                  <span class="icon-bar"></span>
-              </button>
-              <a class="navbar-brand" href="<?php echo $this->url('bill',array('action'=>'index')) ?>">Brand</a>
-          </div>
+  <div id="wrapper">
 
-          <!-- Collect the nav links, forms, and other content for toggling -->
-          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-              <ul class="nav navbar-nav">
-                  <li class="active"> <a href="<?php echo $this->url('home') ?>"><?php echo $this->translate('Skeleton Application') ?></a></li>
-                  <li class="dropdown">
-                      <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <span class="caret"></span></a>
-                      <ul class="dropdown-menu" role="menu">
-                          <li><a href="#">Action</a></li>
-                          <li><a href="#">Another action</a></li>
-                          <li><a href="#">Something else here</a></li>
-                          <li class="divider"></li>
-                          <li><a href="#">Separated link</a></li>
-                          <li class="divider"></li>
-                          <li><a href="#">One more separated link</a></li>
-                      </ul>
-                  </li>
-              </ul>
-              <form class="navbar-form navbar-left" role="search">
-                  <div class="form-group">
-                      <input type="text" class="form-control" placeholder="Search">
-                  </div>
-                  <button type="submit" class="btn btn-default">Submit</button>
-              </form>
-              <ul class="nav navbar-nav navbar-right">
-                  <li><a href="#">Link</a></li>
-                  <li class="dropdown">
-                      <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <span class="caret"></span></a>
-                      <ul class="dropdown-menu" role="menu">
-                          <li><a href="#">Action</a></li>
-                          <li><a href="#">Another action</a></li>
-                          <li><a href="#">Something else here</a></li>
-                          <li class="divider"></li>
-                          <li><a href="#">Separated link</a></li>
-                      </ul>
-                  </li>
-              </ul>
-          </div><!-- /.navbar-collapse -->
-      </div><!-- /.container-fluid -->
+  <!-- Navigation -->
+  <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+      <?php
+            if(isset($this->currentUserRole)){
+                echo $this->partial('layout/navigation');
+                echo $this->partial('layout/sidebar');
+            }
+      ?>
   </nav>
 
-
-    <div class="container">
-        <div class="row">
-            <div class="col-xs-12 flash-messages">
-                <?php echo $this->partial('layout/flash'); ?>
-            </div>
-        </div>
-
+  <div id="page-wrapper">
       <?php echo $this->content; ?>
-
-      <hr>
-
-      <footer>
-      </footer>
-
-    </div> <!-- /container -->
+  </div>
+  <!-- /#wrapper -->
 
   <!-- Scripts -->
   <?php echo $this->headScript()->appendFile($this->basePath() . '/js/html5.js', 'text/javascript', array('conditional' => 'lt IE 9',))
       ->appendFile($this->basePath() . '/js/jquery.min.js')
       ->appendFile($this->basePath() . '/js/bootstrap.min.js')
+      ->appendFile($this->basePath() . '/js/plugins/metisMenu/metisMenu.min.js')
+      ->appendFile($this->basePath() . '/js/plugins/morris/raphael.min.js')
+      ->appendFile($this->basePath() . '/js/plugins/morris/morris.min.js')
+      ->appendFile($this->basePath() . '/js/plugins/morris/morris-data.js')
+      ->appendFile($this->basePath() . '/js/sb-admin-2.js')
 
       ?>
   </body>

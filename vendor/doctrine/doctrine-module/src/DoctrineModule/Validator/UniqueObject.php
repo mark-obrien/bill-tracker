@@ -48,11 +48,6 @@ class UniqueObject extends ObjectExists
      */
     protected $objectManager;
 
-    /**
-     * @var boolean
-     */
-    protected $useContext;
-
     /***
      * Constructor
      *
@@ -88,7 +83,6 @@ class UniqueObject extends ObjectExists
         }
 
         $this->objectManager = $options['object_manager'];
-        $this->useContext    = isset($options['use_context']) ? (boolean) $options['use_context'] : false;
     }
 
     /**
@@ -100,10 +94,6 @@ class UniqueObject extends ObjectExists
      */
     public function isValid($value, $context = null)
     {
-        if (!$this->useContext) {
-            $context = (array) $value;
-        }
-
         $value = $this->cleanSearchValue($value);
         $match = $this->objectRepository->findOneBy($value);
 
@@ -139,24 +129,16 @@ class UniqueObject extends ObjectExists
     /**
      * Gets the identifiers from the context.
      *
-     * @param  array|object $context
+     * @param array $context
      * @return array
      * @throws Exception\RuntimeException
      */
-    protected function getExpectedIdentifiers($context = null)
+    protected function getExpectedIdentifiers(array $context = null)
     {
         if ($context === null) {
             throw new Exception\RuntimeException(
                 'Expected context to be an array but is null'
             );
-        }
-
-        $className = $this->objectRepository->getClassName();
-
-        if ($context instanceof $className) {
-            return $this->objectManager
-                        ->getClassMetadata($this->objectRepository->getClassName())
-                        ->getIdentifierValues($context);
         }
 
         $result = array();

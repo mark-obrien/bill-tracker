@@ -3,15 +3,20 @@
 namespace Bill\Controller;
  
 use Zend\Mvc\Controller\AbstractActionController;
+use Application\Controller\AbstractBillController;
 use Zend\View\Model\ViewModel;
 use Application\Entity\Bill;
 use Bill\Form\BillForm;
 use Application\Entity\Payment;
 use Bill\Form\PaymentForm;
 use Doctrine\ORM\Query;
+use Zend\View\Model\JsonModel;
+use Doctrine\ORM\AbstractQuery;
 
-class BillController extends AbstractActionController
+class BillController extends AbstractBillController
 {
+    protected $_role = self::ADMIN_ROLE;
+
     protected $em;
  
     public function getEntityManager()
@@ -24,9 +29,24 @@ class BillController extends AbstractActionController
  
     public function indexAction()
     {
-        return new ViewModel(array(
-            'bills' => $this->getEntityManager()->getRepository('Application\Entity\Bill')->findAll(),
-        ));
+
+        return new ViewModel(
+            array(
+                'bills' => $this->getEntityManager()->getRepository('Application\Entity\Bill')->findAll(),
+            )
+        );
+    }
+
+    public function billJsonAction(){
+        $repo = $this->getEntityManager()->getRepository('\Application\Entity\Bill');
+        $query = $repo->createQueryBuilder('c')
+            ->where('c.balance > 0');
+
+        $data = $query->getQuery()->getResult(AbstractQuery::HYDRATE_ARRAY);
+
+        $result = new JsonModel($data);
+
+        return $result;
     }
  
     public function addAction()

@@ -64,16 +64,9 @@ class ObjectRadio extends RadioElement
      */
     public function getValueOptions()
     {
-        if (! empty($this->valueOptions)) {
-            return $this->valueOptions;
+        if (empty($this->valueOptions)) {
+            $this->setValueOptions($this->getProxy()->getValueOptions());
         }
-
-        $proxyValueOptions = $this->getProxy()->getValueOptions();
-
-        if (! empty($proxyValueOptions)) {
-            $this->setValueOptions($proxyValueOptions);
-        }
-
         return $this->valueOptions;
     }
 }

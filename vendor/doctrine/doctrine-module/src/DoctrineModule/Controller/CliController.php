@@ -20,7 +20,6 @@ namespace DoctrineModule\Controller;
 
 use Symfony\Component\Console\Application;
 use Zend\Mvc\Controller\AbstractActionController;
-use Zend\View\Model\ConsoleModel;
 use DoctrineModule\Component\Console\Input\RequestInput;
 
 /**
@@ -49,13 +48,6 @@ class CliController extends AbstractActionController
      */
     public function cliAction()
     {
-        $exitCode = $this->cliApplication->run(new RequestInput($this->getRequest()));
-
-        if (is_numeric($exitCode)) {
-            $model = new ConsoleModel();
-            $model->setErrorLevel($exitCode);
-
-            return $model;
-        }
+        $this->cliApplication->run(new RequestInput($this->getRequest()));
     }
 }

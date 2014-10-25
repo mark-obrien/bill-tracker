@@ -19,19 +19,16 @@
 
 namespace DoctrineModule\Form\Element;
 
-use InvalidArgumentException;
 use RuntimeException;
 use ReflectionMethod;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Persistence\ObjectManager;
 use DoctrineModule\Persistence\ObjectManagerAwareInterface;
-use Traversable;
-use Zend\Stdlib\Guard\GuardUtils;
 
 class Proxy implements ObjectManagerAwareInterface
 {
     /**
-     * @var array|Traversable
+     * @var array
      */
     protected $objects;
 
@@ -125,7 +122,7 @@ class Proxy implements ObjectManagerAwareInterface
     }
 
     /**
-     * @return array|Traversable
+     * @return array
      */
     public function getObjects()
     {
@@ -248,14 +245,14 @@ class Proxy implements ObjectManagerAwareInterface
      *
      * @param callable $callable A callable used to create a label based off of an Entity
      *
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return void
      */
     public function setLabelGenerator($callable)
     {
         if (! is_callable($callable)) {
-            throw new InvalidArgumentException(
+            throw new \InvalidArgumentException(
                 'Property "label_generator" needs to be a callable function or a \Closure'
             );
         }
@@ -330,7 +327,7 @@ class Proxy implements ObjectManagerAwareInterface
     /**
      * @param  $value
      * @return array|mixed|object
-     * @throws RuntimeException
+     * @throws \RuntimeException
      */
     public function getValue($value)
     {
@@ -371,8 +368,8 @@ class Proxy implements ObjectManagerAwareInterface
     /**
      * Load objects
      *
-     * @throws RuntimeException
-     * @throws Exception\InvalidRepositoryResultException
+     * @throws \RuntimeException
+     *
      * @return void
      */
     protected function loadObjects()
@@ -383,9 +380,7 @@ class Proxy implements ObjectManagerAwareInterface
 
         $findMethod = (array) $this->getFindMethod();
         if (!$findMethod) {
-            $findMethodName = 'findAll';
-            $repository = $this->objectManager->getRepository($this->targetClass);
-            $objects = $repository->findAll();
+            $this->objects = $this->objectManager->getRepository($this->targetClass)->findAll();
         } else {
             if (!isset($findMethod['name'])) {
                 throw new RuntimeException('No method name was set');
@@ -409,36 +404,18 @@ class Proxy implements ObjectManagerAwareInterface
             foreach ($r->getParameters() as $param) {
                 if (array_key_exists(strtolower($param->getName()), $findMethodParams)) {
                     $args[] = $findMethodParams[strtolower($param->getName())];
-                } elseif ($param->isDefaultValueAvailable()) {
+                } else {
                     $args[] = $param->getDefaultValue();
-                } elseif (!$param->isOptional()) {
-                    throw new RuntimeException(
-                        sprintf(
-                            'Required parameter "%s" with no default value for method "%s" in repository "%s"'
-                            . ' was not provided',
-                            $param->getName(),
-                            $findMethodName,
-                            get_class($repository)
-                        )
-                    );
                 }
             }
-            $objects = $r->invokeArgs($repository, $args);
+            $this->objects = $r->invokeArgs($repository, $args);
         }
-
-        GuardUtils::guardForArrayOrTraversable(
-            $objects,
-            sprintf('%s::%s() return value', get_class($repository), $findMethodName),
-            'DoctrineModule\Form\Element\Exception\InvalidRepositoryResultException'
-        );
-
-        $this->objects = $objects;
     }
 
     /**
      * Load value options
      *
-     * @throws RuntimeException
+     * @throws \RuntimeException
      * @return void
      */
     protected function loadValueOptions()
@@ -456,53 +433,55 @@ class Proxy implements ObjectManagerAwareInterface
         $objects    = $this->getObjects();
         $options    = array();
 
-        if ($this->displayEmptyItem) {
+        if ($this->displayEmptyItem || empty($objects)) {
             $options[''] = $this->getEmptyItemLabel();
         }
 
-        foreach ($objects as $key => $object) {
-            if (null !== ($generatedLabel = $this->generateLabel($object))) {
-                $label = $generatedLabel;
-            } elseif ($property = $this->property) {
-                if ($this->isMethod == false && !$metadata->hasField($property)) {
-                    throw new RuntimeException(
-                        sprintf(
-                            'Property "%s" could not be found in object "%s"',
-                            $property,
-                            $targetClass
-                        )
-                    );
+        if (!empty($objects)) {
+            foreach ($objects as $key => $object) {
+                if (null !== ($generatedLabel = $this->generateLabel($object))) {
+                    $label = $generatedLabel;
+                } elseif ($property = $this->property) {
+                    if ($this->isMethod == false && !$metadata->hasField($property)) {
+                        throw new RuntimeException(
+                            sprintf(
+                                'Property "%s" could not be found in object "%s"',
+                                $property,
+                                $targetClass
+                            )
+                        );
+                    }
+
+                    $getter = 'get' . ucfirst($property);
+                    if (!is_callable(array($object, $getter))) {
+                        throw new RuntimeException(
+                            sprintf('Method "%s::%s" is not callable', $this->targetClass, $getter)
+                        );
+                    }
+
+                    $label = $object->{$getter}();
+                } else {
+                    if (!is_callable(array($object, '__toString'))) {
+                        throw new RuntimeException(
+                            sprintf(
+                                '%s must have a "__toString()" method defined if you have not set a property'
+                                . ' or method to use.',
+                                $targetClass
+                            )
+                        );
+                    }
+
+                    $label = (string) $object;
                 }
 
-                $getter = 'get' . ucfirst($property);
-                if (!is_callable(array($object, $getter))) {
-                    throw new RuntimeException(
-                        sprintf('Method "%s::%s" is not callable', $this->targetClass, $getter)
-                    );
+                if (count($identifier) > 1) {
+                    $value = $key;
+                } else {
+                    $value = current($metadata->getIdentifierValues($object));
                 }
 
-                $label = $object->{$getter}();
-            } else {
-                if (!is_callable(array($object, '__toString'))) {
-                    throw new RuntimeException(
-                        sprintf(
-                            '%s must have a "__toString()" method defined if you have not set a property'
-                            . ' or method to use.',
-                            $targetClass
-                        )
-                    );
-                }
-
-                $label = (string) $object;
+                $options[] = array('label' => $label, 'value' => $value);
             }
-
-            if (count($identifier) > 1) {
-                $value = $key;
-            } else {
-                $value = current($metadata->getIdentifierValues($object));
-            }
-
-            $options[] = array('label' => $label, 'value' => $value);
         }
 
         $this->valueOptions = $options;

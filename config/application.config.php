@@ -6,7 +6,8 @@ return array(
         'Bill',
         'ZendDeveloperTools',
         'DoctrineModule',
-        'DoctrineORMModule'
+        'DoctrineORMModule',
+        'DoctrineDataFixtureModule',
     ),
 
     // These are various options for the listeners attached to the ModuleManager
