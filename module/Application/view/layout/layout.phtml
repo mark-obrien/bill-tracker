@@ -9,12 +9,13 @@
 
     <!-- Le styles -->
     <?php echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/images/favicon.ico'))
-                    ->appendStylesheet($this->basePath() . '/css/bootstrap.min.css')
-                    ->appendStylesheet($this->basePath() . '/css/plugins/metisMenu/metisMenu.min.css')
-                    ->appendStylesheet($this->basePath() . '/css/plugins/timeline.css')
-                    ->appendStylesheet($this->basePath() . '/css/sb-admin-2.css')
-                    ->appendStylesheet($this->basePath() . '/css/plugins/morris.css')
-                    ->appendStylesheet($this->basePath() . '/font-awesome-4.1.0/css/font-awesome.min.css')?>
+            ->appendStylesheet($this->basePath() . '/css/bootstrap.min.css')
+            ->appendStylesheet($this->basePath() . '/css/plugins/metisMenu/metisMenu.min.css')
+            ->appendStylesheet($this->basePath() . '/css/plugins/timeline.css')
+            ->appendStylesheet($this->basePath() . '/css/sb-admin-2.css')
+            ->appendStylesheet($this->basePath() . '/css/plugins/morris.css')
+            ->appendStylesheet($this->basePath() . '/font-awesome-4.1.0/css/font-awesome.min.css')
+    ?>
   </head>
 
   <body>
@@ -33,11 +34,13 @@
 
   <div id="page-wrapper">
 
-  <div class="row">
-      <div class="col-xs-12 flash-messages">
-          <?php echo $this->partial('layout/flash'); ?>
+      <div class="container">
+          <div class="row">
+              <div class="col-xs-12 flash-messages">
+                  <?php echo $this->partial('layout/flash'); ?>
+              </div>
+          </div>
       </div>
-  </div>
 
   <?php echo $this->content; ?>
 

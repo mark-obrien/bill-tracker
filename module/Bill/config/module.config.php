@@ -8,6 +8,7 @@ return array(
     'controllers' => array(
         'invokables' => array(
             'Bill\Controller\Bill' => 'Bill\Controller\BillController',
+            'Bill\Controller\BillJson' => 'Bill\Controller\BillJsonController',
         ),
     ),
     'doctrine' => array(
@@ -40,6 +41,20 @@ return array(
                     ),
                 ),
             ),
+            'bill-json' => array(
+                'type'    => 'segment',
+                'options' => array(
+                    'route'    => '/bill/json[/:action][/:id]',
+                    'constraints' => array(
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                        'id'     => '[0-9]+',
+                    ),
+                    'defaults' => array(
+                        'controller' => 'Bill\Controller\BillJson',
+                        'action'     => 'index',
+                    ),
+                ),
+            ),
         ),
     ),
 //    'view_helpers' => array(
@@ -50,6 +65,9 @@ return array(
     'view_manager' => array(
         'template_path_stack' => array(
             'bill' => __DIR__ . '/../view',
+        ),
+        'strategies' => array(
+            'ViewJsonStrategy',
         ),
     ),
 );

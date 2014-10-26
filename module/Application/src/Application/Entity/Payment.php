@@ -10,6 +10,7 @@ use Zend\InputFilter\InputFilterInterface;
 use Doctrine\Common\Collections;
 use Doctrine\Common\Collections\ArrayCollection;
 use Application\Entity\Bill;
+use Doctrine\Common\Collections\Criteria;
   
 /**
  * A Payment.
@@ -36,12 +37,22 @@ class Payment implements InputFilterAwareInterface
      * @var Bill
      **/
     protected $bill;
-  
+
+    /**
+     * @ORM\Column(type="string")
+     */
+    protected $bill_json;
+
     /**
      * @ORM\Column(type="datetime")
      * @var \DateTime
      */
     protected $date;
+
+    /**
+     * @ORM\Column(type="string")
+     */
+    protected $date_json;
 
     /**
      * @ORM\Column(type="float")
@@ -89,6 +100,11 @@ class Payment implements InputFilterAwareInterface
     {
         return get_object_vars($this);
     }
+
+    public function get_bill_name(Bill $bill){
+
+        return $bill->creditor;
+    }
   
     /**
      * Populate from an array.
@@ -99,6 +115,8 @@ class Payment implements InputFilterAwareInterface
     {
         $this->id = $data['id'];
         $this->date = new \DateTime("now");
+        $this->date_json = $this->date->format('Y-m');
+        $this->bill_json = $this->get_bill_name($this->bill);
         $this->amount = $data['amount'];
         $this->running_balance = $this->bill->balance - $data['amount'];
         $this->bill->balance = $this->running_balance;
@@ -106,7 +124,6 @@ class Payment implements InputFilterAwareInterface
 
     public function addBill(Bill $bill)
      {
-
          $this->bill = $bill;
      }
 
