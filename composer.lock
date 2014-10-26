@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "0d61d14d5b8617ef8644674f792807d9",
+    "hash": "07acbf920f1f9e55d8ed11f8f398ea8e",
     "packages": [
         {
             "name": "acelaya/zf2-acmailer",

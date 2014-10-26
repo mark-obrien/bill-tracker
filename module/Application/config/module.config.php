@@ -88,7 +88,7 @@ return array(
     ),
     'controllers' => array(
         'invokables' => array(
-            'Application\Controller\Index' => 'Application\Controller\IndexController',
+            'Application\Controller\Index'   => 'Application\Controller\IndexController',
             'Application\Controller\Account' => 'Application\Controller\AccountController',
         ),
     ),
@@ -112,6 +112,7 @@ return array(
         ),
         'template_path_stack' => array(
             __DIR__ . '/../view',
+            __DIR__ . '/../view/form',
         ),
     ),
 );

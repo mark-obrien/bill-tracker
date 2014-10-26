@@ -11,18 +11,28 @@ namespace Application\Controller;
 
 use Application\Form\LoginForm;
 use Zend\Mvc\Controller\AbstractActionController;
+use Application\Entity\UserRepository;
+use Application\Entity\User;
+use Zend\Validator\Date;
 use Zend\View\Model\ViewModel;
+use Application\Entity\Role;
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\DataFixtures\FixtureInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\Events;
+use Application\Entity\EntityEventListener;
 
 class IndexController extends AbstractBillController
 {
     public function indexAction()
     {
+
         $this->hidePageHeader();
 
         $form = new LoginForm();
-        if(!empty($_COOKIE['franchoice-entree']))
+        if(!empty($_COOKIE['bill-tracker']))
         {
-            $data = unserialize($_COOKIE['franchoice-entree']);
+            $data = unserialize($_COOKIE['bill-tracker']);
             if(!empty($data['username']))
             {
                 $form->setData(array('username' => $data['username']));

@@ -51,13 +51,7 @@ class AccountController extends AbstractBillController
                     switch($user->getRole())
                     {
                         case $this::ADMIN_ROLE:
-                            $routeSlug = 'franadmin';
-                            break;
-                        case $this::CONSULTANT_ROLE:
-                            $routeSlug = 'cadmin';
-                            break;
-                        case $this::FRANCHISOR_ROLE:
-                            $routeSlug = 'fadmin';
+                            $routeSlug = 'bill';
                             break;
                     }
 
@@ -65,7 +59,7 @@ class AccountController extends AbstractBillController
                     if($formData['rememberme'])
                     {
                         $cookie = array('username' => $user->username);
-                        setcookie("franchoice-entree", serialize($cookie), time()+60*60*24*100,'/');
+                        setcookie("bill-tracker", serialize($cookie), time()+60*60*24*100,'/');
                     }
 
                     return $this->redirect()->toRoute($routeSlug);
