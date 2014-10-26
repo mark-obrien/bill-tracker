@@ -2,7 +2,7 @@
  
 namespace Bill\Controller;
  
-use Zend\Mvc\Controller\AbstractActionController;
+use Application\Controller\AbstractBillController;
 use Zend\View\Model\ViewModel;
 use Application\Entity\Bill;
 use Bill\Form\BillForm;
@@ -10,8 +10,10 @@ use Application\Entity\Payment;
 use Bill\Form\PaymentForm;
 use Doctrine\ORM\Query;
 
-class BillController extends AbstractActionController
+class BillController extends AbstractBillController
 {
+    protected $_role = self::ADMIN_ROLE;
+
     protected $em;
  
     public function getEntityManager()

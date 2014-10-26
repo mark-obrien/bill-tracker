@@ -1,0 +1,49 @@
+<img class="img-responsive center-block buffer-20" src="<?= $this->basePath("img/logo.gif")?>"/>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">FranChoice Entrée System Login</h3>
+    </div>
+    <div class="panel-body">
+        <?php
+        $form->prepare();
+        $form->setAttribute('class', 'form-horizontal');
+        $form->setAttribute('action', $this->url('Application\account', array('action' => 'login')));
+        ?>
+        <?= $this->form()->openTag($form);?>
+        <div class="form-group">
+            <div class="col-sm-2"><label class="control-label">Username:</label></div>
+            <div class="col-sm-10">
+                <?= $this->formElement($form->get("username")) ?>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-2"><label class="control-label">Password:</label></div>
+            <div class="col-sm-10">
+                <?= $this->formElement($form->get("password")) ?>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-10 col-sm-offset-2 text-danger">
+                Your Username is your email address.
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <div class="">
+                    <?= $this->formElement($form->get("rememberme")) ?> Remember me
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-10 col-sm-offset-2">
+                <button class="btn btn-default" name="submit" type="submit">Submit</button>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-10 col-sm-offset-2">
+                <a class="small" href="<?= $this->url('Application\account', array('action' => 'forgot-password'))?>">Forgot Password? Click Here</a>
+            </div>
+        </div>
+        <?= $this->form()->closeTag();?>
+    </div>
+</div>

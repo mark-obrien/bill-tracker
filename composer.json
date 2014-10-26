@@ -1,5 +1,4 @@
 {
-    "minimum-stability": "dev",
     "name": "zendframework/skeleton-application",
     "description": "Skeleton Application for ZF2",
     "license": "BSD-3-Clause",
@@ -11,7 +10,28 @@
     "require": {
         "php": ">=5.3.3",
         "zendframework/zendframework": "2.3.*",
-        "doctrine/doctrine-orm-module": "dev-master",
-        "zendframework/zend-developer-tools": "dev-master"
+        "zendframework/zftool": "dev-master",
+        "doctrine/doctrine-orm-module": "0.*",
+        "zendframework/zend-developer-tools": "dev-master",
+        "hounddog/doctrine-data-fixture-module": "0.0.*",
+        "acelaya/zf2-acmailer": "4.*",
+        "zendframework/zendpdf": "dev-master",
+        "dino/dompdf-module": "dev-master"
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "./vendor/bin/doctrine-module orm:schema-tool:drop --force",
+            "./vendor/bin/doctrine-module orm:schema-tool:create",
+            "./vendor/bin/doctrine-module orm:validate-schema"
+        ],
+        "post-update-cmd": [
+            "./vendor/bin/doctrine-module orm:schema-tool:update --force",
+            "./vendor/bin/doctrine-module orm:validate-schema"
+        ],
+        "post-status-cmd": [
+            "./vendor/bin/doctrine-module orm:schema-tool:drop --force",
+            "./vendor/bin/doctrine-module orm:schema-tool:create",
+            "./vendor/bin/doctrine-module data-fixture:import --append"
+        ]
     }
 }
