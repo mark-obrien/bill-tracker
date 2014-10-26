@@ -13,7 +13,10 @@ return array(
                 )
             )
         )
-    ), 
+    ),
+    'data-fixture' => array(
+        'Application_fixture' => __DIR__ . '/../src/Application/Fixture',
+    ),
     'router' => array(
         'routes' => array(
             'home' => array(
