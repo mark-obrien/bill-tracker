@@ -1,0 +1,14 @@
+
+body{
+    background: #ffffff;
+}
+
+#page-wrapper {
+    margin:0;
+    border:none;
+}
+
+.sidebar,
+.navbar-default{
+    display: none;
+}

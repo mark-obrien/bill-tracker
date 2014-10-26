@@ -1,49 +1,37 @@
-<img class="img-responsive center-block buffer-20" src="<?= $this->basePath("img/logo.gif")?>"/>
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h3 class="panel-title">FranChoice Entrée System Login</h3>
-    </div>
-    <div class="panel-body">
-        <?php
-        $form->prepare();
-        $form->setAttribute('class', 'form-horizontal');
-        $form->setAttribute('action', $this->url('Application\account', array('action' => 'login')));
-        ?>
-        <?= $this->form()->openTag($form);?>
-        <div class="form-group">
-            <div class="col-sm-2"><label class="control-label">Username:</label></div>
-            <div class="col-sm-10">
-                <?= $this->formElement($form->get("username")) ?>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-sm-2"><label class="control-label">Password:</label></div>
-            <div class="col-sm-10">
-                <?= $this->formElement($form->get("password")) ?>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-sm-10 col-sm-offset-2 text-danger">
-                Your Username is your email address.
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10">
-                <div class="">
-                    <?= $this->formElement($form->get("rememberme")) ?> Remember me
+<?php echo $this->headLink()->appendStylesheet($this->basePath() . '/css/login.css'); ?>
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+            <div class="login-panel panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Please Sign In</h3>
+                </div>
+                <div class="panel-body">
+                <?php
+                    $form->prepare();
+                    $form->setAttribute('role', 'form');
+                    $form->setAttribute('action', $this->url('Application\account', array('action' => 'login')));
+                ?>
+                <?php echo $this->form()->openTag($form);?>
+                    <fieldset>
+                        <div class="form-group">
+                            <?php echo  $this->formElement($form->get("username")) ?>
+                        </div>
+                        <div class="form-group">
+                            <?php echo  $this->formElement($form->get("password")) ?>
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <?php echo  $this->formElement($form->get("rememberme")) ?> Remember me
+                            </label>
+                        </div>
+                        <!-- Change this to a button or input when using this as a form -->
+                        <button class="btn btn-lg btn-success btn-block" name="submit" type="submit">Submit</button>
+                        <a class="small" href="<?= $this->url('Application\account', array('action' => 'forgot-password'))?>">Forgot Password? Click Here</a>
+                    </fieldset>
+                <?php echo $this->form()->closeTag();?>
                 </div>
             </div>
         </div>
-        <div class="form-group">
-            <div class="col-sm-10 col-sm-offset-2">
-                <button class="btn btn-default" name="submit" type="submit">Submit</button>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="col-sm-10 col-sm-offset-2">
-                <a class="small" href="<?= $this->url('Application\account', array('action' => 'forgot-password'))?>">Forgot Password? Click Here</a>
-            </div>
-        </div>
-        <?= $this->form()->closeTag();?>
     </div>
 </div>
