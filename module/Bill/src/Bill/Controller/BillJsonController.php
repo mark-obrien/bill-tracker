@@ -21,8 +21,12 @@ class BillJsonController extends AbstractBillController
 
     public function paymentAction(){
 
+        $bill_id = ($this->params()->fromRoute('id')) ? $this->params()->fromRoute('id') : 1;
+
         $repo = $this->getEntityManager()->getRepository('\Application\Entity\Payment');
-        $query = $repo->createQueryBuilder('c');
+        $query = $repo->createQueryBuilder('c')
+            ->where('c.bill = :bill_id')
+            ->setParameter('bill_id', $bill_id);
 
         $data = $query->getQuery()->getResult(AbstractQuery::HYDRATE_ARRAY);
 

@@ -23,7 +23,7 @@
   <div id="wrapper">
 
   <!-- Navigation -->
-  <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+  <nav class="navbar navbar-default navbar-static-top" role="navigation">
     <?php
         if (isset($currentUser)) {
             echo $this->partial('layout/navigation');
@@ -42,7 +42,7 @@
           </div>
       </div>
 
-  <?php echo $this->content; ?>
+     <?php echo $this->content; ?>
 
   </div>
   <!-- /#page-wrapper -->
