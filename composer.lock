@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "acelaya/zf2-acmailer",
-            "version": "v4.1.1",
+            "version": "v4.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/acelaya/ZF2-AcMailer.git",
-                "reference": "f5f12d9dadf3cbbc0d22c10777beae5e75573953"
+                "reference": "0c36ff163766bbd85f6e7fcb4f055f2d8e8a442e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/acelaya/ZF2-AcMailer/zipball/f5f12d9dadf3cbbc0d22c10777beae5e75573953",
-                "reference": "f5f12d9dadf3cbbc0d22c10777beae5e75573953",
+                "url": "https://api.github.com/repos/acelaya/ZF2-AcMailer/zipball/0c36ff163766bbd85f6e7fcb4f055f2d8e8a442e",
+                "reference": "0c36ff163766bbd85f6e7fcb4f055f2d8e8a442e",
                 "shasum": ""
             },
             "require": {
@@ -64,7 +64,7 @@
                 "zend",
                 "zf2"
             ],
-            "time": "2014-10-24 19:44:40"
+            "time": "2014-11-12 20:46:56"
         },
         {
             "name": "dino/dompdf-module",

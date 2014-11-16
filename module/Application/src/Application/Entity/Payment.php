@@ -55,12 +55,12 @@ class Payment implements InputFilterAwareInterface
     protected $date_json;
 
     /**
-     * @ORM\Column(type="float")
+     * @ORM\Column(type="decimal", scale=2, precision=10)
      */
     protected $amount;
 
     /**
-     * @ORM\Column(type="float")
+     * @ORM\Column(type="decimal", scale=2, precision=10)
      */
     protected $running_balance;
 
@@ -158,7 +158,7 @@ class Payment implements InputFilterAwareInterface
                         'options' => array(
                             'encoding' => 'UTF-8',
                             'min'      => 1,
-                            'max'      => 100,
+                            'max'      => 10,
                         ),
                     ),
                 ),
@@ -177,7 +177,7 @@ class Payment implements InputFilterAwareInterface
                         'options' => array(
                             'encoding' => 'UTF-8',
                             'min'      => 1,
-                            'max'      => 100,
+                            'max'      => 10,
                         ),
                     ),
                 ),

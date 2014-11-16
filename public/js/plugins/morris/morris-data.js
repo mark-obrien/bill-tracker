@@ -1,7 +1,8 @@
-$(function() {
+var morris = {
 
-    function drawAreaChart() {
-        $.getJSON("/bill/json/payment", function (json) {
+    drawArea : function drawAreaChart() {
+        var billId = $('#morris-area-chart').data('bill');
+        $.getJSON("/bill/json/payment/" + billId, function (json) {
             var billAreaChart = [];
             var billJson = json;
 
@@ -19,12 +20,14 @@ $(function() {
                 data: billAreaChart,
                 xkey: 'x',
                 ykeys: ['y'],
-                pointSize: 2
+                labels: ['Balance'],
+                pointSize: 2,
+                hideHover: 'auto'
             });
         });
-    }
+    },
 
-    function drawDonutChart() {
+    drawDonut:function drawDonutChart() {
         $.getJSON("/bill/json/bill", function (json) {
             var billDonut = [];
             var billJson = json;
@@ -47,60 +50,5 @@ $(function() {
         });
     }
 
-    drawAreaChart();
-    drawDonutChart();
 
-    //Morris.Donut({
-    //    element: 'morris-donut-chart',
-    //    data: [{
-    //        label: "Download Sales",
-    //        value: 12
-    //    }, {
-    //        label: "In-Store Sales",
-    //        value: 30
-    //    }, {
-    //        label: "Mail-Order Sales",
-    //        value: 20
-    //    }],
-    //    resize: true
-    //});
-
-    //Morris.Bar({
-    //    element: 'morris-bar-chart',
-    //    data: [{
-    //        y: '2006',
-    //        a: 100,
-    //        b: 90
-    //    }, {
-    //        y: '2007',
-    //        a: 75,
-    //        b: 65
-    //    }, {
-    //        y: '2008',
-    //        a: 50,
-    //        b: 40
-    //    }, {
-    //        y: '2009',
-    //        a: 75,
-    //        b: 65
-    //    }, {
-    //        y: '2010',
-    //        a: 50,
-    //        b: 40
-    //    }, {
-    //        y: '2011',
-    //        a: 75,
-    //        b: 65
-    //    }, {
-    //        y: '2012',
-    //        a: 100,
-    //        b: 90
-    //    }],
-    //    xkey: 'y',
-    //    ykeys: ['a', 'b'],
-    //    labels: ['Series A', 'Series B'],
-    //    hideHover: 'auto',
-    //    resize: true
-    //});
-
-});
+}

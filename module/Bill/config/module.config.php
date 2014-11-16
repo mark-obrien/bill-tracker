@@ -57,17 +57,39 @@ return array(
             ),
         ),
     ),
-//    'view_helpers' => array(
-//        'invokables' => array(
-//            'formrow' => 'Application\Form\View\Helper\FormRowBS'
-//        ),
-//    ),
     'view_manager' => array(
         'template_path_stack' => array(
             'bill' => __DIR__ . '/../view',
         ),
         'strategies' => array(
             'ViewJsonStrategy',
+        ),
+    ),
+    'navigation' => array(
+        'default' => array(
+            array(
+                'label' => 'Home',
+                'route' => 'home',
+            ),
+            array(
+                'label' => 'Page #1',
+                'route' => 'bill',
+                'pages' => array(
+                    array(
+                        'label' => 'Child #1',
+                        'route' => 'bill'
+                    )
+                )
+            ),
+            array(
+                'label' => 'Page #2',
+                'route' => 'bill',
+            )
+        )
+    ),
+    'service_manager' => array(
+        'factories' => array(
+            'navigation' => 'Zend\Navigation\Service\DefaultNavigationFactory',
         ),
     ),
 );

@@ -4,6 +4,7 @@ namespace AcMailer\Service;
 use AcMailer\Event\MailEvent;
 use AcMailer\Event\MailListenerInterface;
 use AcMailer\Event\MailListenerAwareInterface;
+use AcMailer\Exception\MailException;
 use Zend\EventManager\EventManager;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerInterface;
@@ -11,7 +12,7 @@ use Zend\Mail\Transport\TransportInterface;
 use Zend\Mail\Message;
 use Zend\Mime\Message as MimeMessage;
 use Zend\Mime\Part as MimePart;
-use Zend\Mail\Transport\Exception\RuntimeException;
+use Zend\Mail\Exception\ExceptionInterface as ZendMailException;
 use AcMailer\Result\ResultInterface;
 use AcMailer\Result\MailResult;
 use Zend\Mime\Mime;
@@ -73,36 +74,60 @@ class MailService implements MailServiceInterface, EventManagerAwareInterface, M
     /**
      * Sends the mail
      * @return ResultInterface
-     * @throws \Exception
+     * @throws MailException
      */
     public function send()
     {
         // Attach files before sending the email
         $this->attachFiles();
 
-        // Send the email
+        $result = new MailResult();
         try {
             // Trigger pre send event
-            $this->getEventManager()->trigger(new MailEvent($this));
+            $this->getEventManager()->trigger($this->createMailEvent());
 
             // Try to send the message
             $this->transport->send($this->message);
 
             // Trigger post send event
-            $this->getEventManager()->trigger(new MailEvent($this, MailEvent::EVENT_MAIL_POST_SEND));
-
-            return new MailResult();
-        } catch (RuntimeException $e) {
-            // Trigger send error event
-            $this->getEventManager()->trigger(new MailEvent($this, MailEvent::EVENT_MAIL_SEND_ERROR));
-
-            return new MailResult(false, $e->getMessage(), $e);
+            $this->getEventManager()->trigger($this->createMailEvent(MailEvent::EVENT_MAIL_POST_SEND, $result));
         } catch (\Exception $e) {
+            $result = $this->createMailResultFromException($e);
             // Trigger send error event
-            $this->getEventManager()->trigger(new MailEvent($this, MailEvent::EVENT_MAIL_SEND_ERROR));
+            $this->getEventManager()->trigger($this->createMailEvent(MailEvent::EVENT_MAIL_SEND_ERROR, $result));
 
-            throw $e;
+            // If the exception produced is not a Zend\Mail exception, rethrow it as a MailException
+            if (! $e instanceof ZendMailException) {
+                throw new MailException('An non Zend\Mail exception occurred', $e->getCode(), $e);
+            }
         }
+
+        return $result;
+    }
+
+    /**
+     * Creates a new MailEvent object
+     * @param ResultInterface $result
+     * @param string $name
+     * @return MailEvent
+     */
+    protected function createMailEvent($name = MailEvent::EVENT_MAIL_PRE_SEND, ResultInterface $result = null)
+    {
+        $event = new MailEvent($this, $name);
+        if (isset($result)) {
+            $event->setResult($result);
+        }
+        return $event;
+    }
+
+    /**
+     * Creates a error MailResult from an exception
+     * @param \Exception $e
+     * @return MailResult
+     */
+    protected function createMailResultFromException(\Exception $e)
+    {
+        return new MailResult(false, $e->getMessage(), $e);
     }
 
     /**
@@ -137,6 +162,10 @@ class MailService implements MailServiceInterface, EventManagerAwareInterface, M
             ));
         }
 
+        // The headers Content-type and Content-transfer-encoding are duplicated every time the body is set.
+        // Removing them before setting the body prevents this error
+        $this->message->getHeaders()->removeHeader('contenttype');
+        $this->message->getHeaders()->removeHeader('contenttransferencoding');
         $this->message->setBody($body);
         return $this;
     }
@@ -210,12 +239,13 @@ class MailService implements MailServiceInterface, EventManagerAwareInterface, M
         $bodyPart->type     = Mime::TYPE_HTML; // TODO
         $attachmentParts    = array();
         $info               = new \finfo(FILEINFO_MIME_TYPE);
-        foreach ($this->attachments as $attachment) {
+        foreach ($this->attachments as $key => $attachment) {
             if (!is_file($attachment)) {
                 continue; // If checked file is not valid, continue to the next
             }
 
-            $basename = basename($attachment);
+            // If the key is a string, use it as the attachment name
+            $basename = is_string($key) ? $key : basename($attachment);
 
             $part               = new MimePart(fopen($attachment, 'r'));
             $part->id           = $basename;
@@ -245,11 +275,16 @@ class MailService implements MailServiceInterface, EventManagerAwareInterface, M
 
     /**
      * @param string $path
+     * @param string|null $filename
      * @return $this
      */
-    public function addAttachment($path)
+    public function addAttachment($path, $filename = null)
     {
-        $this->attachments[] = $path;
+        if (isset($filename)) {
+            $this->attachments[$filename] = $path;
+        } else {
+            $this->attachments[] = $path;
+        }
         return $this;
     }
 

@@ -49,12 +49,12 @@ class Bill implements InputFilterAwareInterface
     protected $type;
 
     /**
-     * @ORM\Column(type="float")
+     * @ORM\Column(type="decimal", scale=2, precision=10)
      */
     protected $m_payment;
 
     /**
-     * @ORM\Column(type="float")
+     * @ORM\Column(type="decimal", scale=2, precision=10)
      */
     protected $balance;
 

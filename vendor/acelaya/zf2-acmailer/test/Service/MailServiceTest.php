@@ -111,6 +111,21 @@ class MailServiceTest extends \PHPUnit_Framework_TestCase
         $this->mailService->send();
     }
 
+    public function testZendMailExceptionsAreNotRethrown()
+    {
+        $this->transport->setForceError(true, new \Zend\Mail\Exception\InvalidArgumentException());
+        $result = $this->mailService->send();
+        $this->assertFalse($result->isValid());
+
+        $this->transport->setForceError(true, new \Zend\Mail\Exception\BadMethodCallException());
+        $result = $this->mailService->send();
+        $this->assertFalse($result->isValid());
+
+        $this->transport->setForceError(true, new \Zend\Mail\Protocol\Exception\InvalidArgumentException());
+        $result = $this->mailService->send();
+        $this->assertFalse($result->isValid());
+    }
+
     public function testSetTransport()
     {
         $this->assertSame($this->transport, $this->mailService->getTransport());
@@ -190,7 +205,7 @@ class MailServiceTest extends \PHPUnit_Framework_TestCase
         $this->mailService->setAttachments(array('one', 'two', 'three'));
         $this->mailService->addAttachments(array('four', 'five', 'six'));
         $this->mailService->addAttachment('seven');
-        $this->mailService->addAttachment('eight');
+        $this->mailService->addAttachment('eight', 'with-alias');
         $this->assertCount(8, $this->mailService->getAttachments());
 
         $this->mailService->setAttachments(array('one', 'two'));

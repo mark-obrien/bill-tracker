@@ -2,6 +2,11 @@
 $title = $bill->creditor . ' Payment History';
 $this->headTitle($title);
 $payments = $bill->get_payments();
+$this->headScript()->appendScript(
+    '$(document).ready(function() {
+        morris.drawArea();
+    });',
+    $type = 'text/javascript')
 ?>
 
 <div class="row">
@@ -28,5 +33,35 @@ $payments = $bill->get_payments();
                 </tr>
             <?php } ?>
     </table>
+</div>
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <i class="fa fa-bar-chart-o fa-fw"></i> Balance Chart
+        <div class="pull-right">
+            <div class="btn-group">
+                <button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown">
+                    Actions
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu pull-right" role="menu">
+                    <li><a href="#">Action</a>
+                    </li>
+                    <li><a href="#">Another action</a>
+                    </li>
+                    <li><a href="#">Something else here</a>
+                    </li>
+                    <li class="divider"></li>
+                    <li><a href="#">Separated link</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /.panel-heading -->
+    <div class="panel-body">
+        <div id="morris-area-chart" data-bill="<?php echo $bill->id;?>"></div>
+    </div>
+    <!-- /.panel-body -->
 </div>
 

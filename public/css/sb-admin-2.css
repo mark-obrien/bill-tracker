@@ -27,6 +27,9 @@ body {
     }
 }
 
+.navbar{
+    margin-bottom: 0;
+}
 .navbar-top-links li {
     display: inline-block;
 }

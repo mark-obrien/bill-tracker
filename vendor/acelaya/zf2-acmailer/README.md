@@ -85,12 +85,12 @@ $layout = new \Zend\View\Model\ViewModel(array(
     'name' => 'John Doe',
     'date' => date('Y-m-d')
 ));
-$layout->setTemplate("application/emails/merry-christmas");
+$layout->setTemplate('application/emails/merry-christmas');
 
 $footer = new \Zend\View\Model\ViewModel();
-$footer->setTemplate("application/emails/footer");
+$footer->setTemplate('application/emails/footer');
 
-$layout->addChild($footer, "footer");
+$layout->addChild($footer, 'footer');
 
 $mailService->setSubject('This is the subject')
             ->setTemplate($layout);
@@ -100,7 +100,7 @@ $mailService->setSubject('This is the subject')
 
 The renderer can be changed to another one (ie. Twig or Blade). It just needs to implement `Zend\View\Renderer\RendererInterface`.
 
-By default AcMailer uses the default `ViewRenderer` service via an alias, `mailviewrenderer`. You can override that alias in your `service_manager` configuration in order to change the renderer service to be used:
+By default AcMailer uses the default `ViewRenderer` service via an alias, `mailviewrenderer`. You can override that alias in your `service_manager` configuration in order to change the renderer service to be used (thanks to [kusmierz](https://github.com/kusmierz)):
 
 ```php
 
@@ -115,6 +115,16 @@ return array(
 
 Alternatively you can just set it via setter: `$mailService->setRenderer($renderer);`.
 
+##### Rendering in CLI executions
+
+When running a ZF2 application from the console, the default `ViewRenderer` service is not created. In that case a `Zend\View\Renderer\PhpRenderer` is created on the fly so that templates can be properly rendered.
+
+It has access to `view_manager` and `view_helpers` configuration, so template resolution will properly work and view helpers (both standard and custom) will be accessible from rendered templates.
+
+If you overriden the `mailviewrenderer` service alias with your own view renderer, then that will be used instead of creating one on the fly.
+
+It is safe to use this module to send emails from cron jobs and such.
+
 ##### Attachments
 
 Files can be attached to the email before sending it by providing their paths with `addAttachment`, `addAttachments` or `setAttachments` methods.
@@ -124,19 +134,19 @@ At the moment we call `send`, all the files that already exist will be attached 
 [...]
 
 $mailService->addAttachment('data/mail/attachments/file1.pdf');
-$mailService->addAttachment('data/mail/attachments/file2.pdf'); // This will add the second file to the attachments list
+$mailService->addAttachment('data/mail/attachments/file2.pdf', 'different-filename.pdf');
 
 // Add two more attachments to the list
 $mailService->addAttachments(array(
-    'data/mail/attachments/file3.pdf',
-    'data/mail/attachments/file4.pdf'
+    'another-name.pdf' => 'data/mail/attachments/file3.pdf',
+    'data/mail/attachments/file4.zip'
 ));
 // At this point there is 4 attachments ready to be sent with the email
 
 // If we call this, all previous attachments will be discarded
 $mailService->setAttachments(array(
     'data/mail/attachments/another-file1.pdf',
-    'data/mail/attachments/another-file2.pdf'
+    'name-to-be-displayed.png' => 'data/mail/attachments/another-file2.png'
 ));
 
 // A good way to remove all attachments is to call this
@@ -145,9 +155,11 @@ $mailService->setAttachments(array());
 [...]
 ```
 
+The files will be attached with their real name unless you provide an alternative name as the key of the array element in `addAttachments` and `setAttachments` or as the second argument in `addAttachment`.
+
 **Attention!!** Be careful when attaching files to your email programatically.
 
-Attached images can be displayed inmail by setting the `cid` to the image filename in the image tag like this (thanks to [omarev](https://github.com/acelaya/ZF2-AcMailer/pull/32)).
+Attached images can be displayed inmail by setting the `cid` to the image filename in the image tag like this (thanks to [omarev](https://github.com/acelaya/ZF2-AcMailer/pull/32)). The alternative name should be used if provided.
 
 ```html
 <img alt="This is an attached image" src="cid:image-filename.jpg">
@@ -159,9 +171,9 @@ If mail options does not fit your needs or you need to update them at runtime, t
 
 ```php
 $message = $mailService->getMessage();
-$message->addTo("foobar@example.com")
-        ->addTo("another@example.com")
-        ->addBcc("hidden@domain.com");
+$message->addTo('foobar@example.com')
+        ->addTo('another@example.com')
+        ->addBcc('hidden@domain.com');
 
 $result = $mailService->send();
 ```
@@ -197,10 +209,10 @@ The mail service can be automatically configured by using the provided global co
     - *params*: Array with key-value pairs with parameters to be sent to the template.
     - *children*: Array with children templates to be used within the main template (layout). Each one of them can have its own children. Look at `vendor/acelaya/zf2-acmailer/config/mail.global.php.dist` for details.
 - **attachments**: Allows to define an array of files that will be attached to the message, or even a directory that will be iterated to attach all found files.
-    - *files*: Array of files to be attached
+    - *files*: Array of files to be attached. Can be an associative array where keys are attachment names and values are file paths.
     - *dir*: Directory to iterate.
         - *iterate*: If it is not true, the directory won't be iterated.
-        - *path*: The path of the directory to iterate looking for files.
+        - *path*: The path of the directory to iterate looking for files. This files will be attached with their real names.
         - *recursive*: True or false. Tells if nested directories should be iterated too.
 - **server**: IP address or server name to be used while using a SMTP server. Only used for SMTP transport.
 - **port**: SMTP server port while using SMTP transport.
@@ -220,7 +232,7 @@ This module comes with a built-in event system.
 - If everything was OK another event is triggered (`MailEvent::EVENT_MAIL_POST_SEND`) after the email has been sent.
 - If an error occured, an error event is triggered (`MailEvent::EVENT_MAIL_SEND_ERROR`).
 
-Managing mail events is as easy as extending `AcMailer\Event\AbstractMailListener`. It provides the `onPreSend`, `onPostSend` and `onSendError` methods, which get a `MailEvent` parameter that can be used to get the MailService which triggered the event.
+Managing mail events is as easy as extending `AcMailer\Event\AbstractMailListener`. It provides the `onPreSend`, `onPostSend` and `onSendError` methods, which get a `MailEvent` parameter that can be used to get the `MailService` which triggered the event or the `MailResult` produced.
 
 Then attach the listener object to the `MailService` and the corresponding method will be automatically called when calling the `send` method.
 
@@ -242,6 +254,10 @@ $mailService->detachMailListener($mailListener);
 
 $mailService->send(); // The events on the $mailListener won't be triggered.
 ```
+
+The `MailResult` will always be null when the event `EVENT_MAIL_PRE_SEND` is triggered, since the email hasn't been sent yet.
+
+Any `Zend\Mail` exception will be catched, producing a `EVENT_MAIL_SEND_ERROR` instead. If any other kind of exception occurs, the same event will be triggered, but the exception will be rethrown in the form of an `AcMailer\Exception\MailException`. The event's wrapped exception will be the original exception.
 
 ### Testing
 
