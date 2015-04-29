@@ -115,6 +115,7 @@ class BillController extends AbstractBillController
                 }
             }
  
+            // Redirect to list of albums
             return $this->redirect()->toRoute('bill');
         }
  

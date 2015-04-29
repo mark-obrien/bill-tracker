@@ -2,7 +2,6 @@
 
 namespace Bill;
 
-use Application\Form\View\Helper\FormRowBS;
 
 return array(
     'controllers' => array(
