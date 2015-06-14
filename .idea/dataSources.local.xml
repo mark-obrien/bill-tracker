@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="dataSourceStorageLocal">
-    <data-source name="MySQL - @127.0.0.1" uuid="72d14466-e206-462c-8c9d-677b6ff01a56">
+    <data-source name="MySQL - @localhost" uuid="258e2719-e090-46e1-9fac-8a9a606a1e99">
       <secret-storage>master_key</secret-storage>
-      <user-name>root</user-name>
-      <schema-pattern>zend.*</schema-pattern>
-      <default-schemas>zend.*</default-schemas>
+      <user-name>dev</user-name>
+      <schema-pattern>bill_tracker.*</schema-pattern>
+      <default-schemas>performance_schema.*</default-schemas>
+      <ssh-properties>
+        <enabled>true</enabled>
+        <proxy-host>192.168.56.101</proxy-host>
+        <proxy-port>22</proxy-port>
+        <secret-storage>master_key</secret-storage>
+        <user>vagrant</user>
+        <use-password>false</use-password>
+        <private-key-path>C:\development\projects\bill-tracker\vagrant\puphpet\files\dot\ssh\id_rsa</private-key-path>
+      </ssh-properties>
     </data-source>
   </component>
 </project>
-
