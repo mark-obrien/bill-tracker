@@ -5,9 +5,9 @@ namespace Bill\Controller;
 use Application\Controller\AbstractBillController;
 use Zend\View\Model\ViewModel;
 use Application\Entity\Bill;
-use Bill\Form\BillForm;
+use Application\Form\BillForm;
 use Application\Entity\Payment;
-use Bill\Form\PaymentForm;
+use Application\Form\PaymentForm;
 use Doctrine\ORM\Query;
 
 class BillController extends AbstractBillController
@@ -74,7 +74,7 @@ class BillController extends AbstractBillController
  
         $form  = new BillForm();
         $form->bind($bill);
-        $form->get('submit')->setAttribute('value', 'Edit');
+        $form->get('submit')->setAttribute('value', 'Save Changes');
  
         $request = $this->getRequest();
         if ($request->isPost()) {
@@ -128,6 +128,7 @@ class BillController extends AbstractBillController
     {
 
         $bill_id = (int) $this->params()->fromRoute('id');
+        $bill = $this->getEntityManager()->find('Application\Entity\Bill', $bill_id);
 
         $form = new PaymentForm();
 
@@ -135,15 +136,17 @@ class BillController extends AbstractBillController
         if ($request->isPost()) {
 
             $payment = new Payment();
-            $bill_obj = $this->getEntityManager()->find('Application\Entity\Bill', $bill_id);
 
-            $payment->addBill($bill_obj);
+            $payment->addBill($bill);
             $form->setInputFilter($payment->getInputFilter());
             $form->setData($request->getPost());
 
             if ($form->isValid()) {
                 $payment->exchangeArray($form->getData());
                 $this->getEntityManager()->persist($payment);
+
+                $bill->update_running_balance($payment);
+
                 $this->getEntityManager()->flush();
 
                 // Redirect to list of bills
@@ -152,7 +155,7 @@ class BillController extends AbstractBillController
         }
         return array(
             'form' => $form,
-            'id' => $bill_id
+            'bill' => $bill
         );
     }
 

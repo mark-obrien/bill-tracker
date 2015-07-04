@@ -4,8 +4,8 @@ namespace Application\Form;
 
 use Zend\Form\Form;
 
-
 class LoginForm extends Form{
+
     public function __construct($name = null)
     {
         parent::__construct('login');

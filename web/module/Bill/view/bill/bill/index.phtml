@@ -51,16 +51,20 @@ $this->headScript()->appendScript(
                                 </thead>
                                 <tbody>
                                 <?php foreach($bills as $bill) :
-                                    $latest_payment = (is_object($bill->get_latest_payment())) ? $bill->get_latest_payment()->date->format('m/d/Y') : "No Payment Recorded";
-                                    $running_balance = (is_object($bill->get_latest_payment())) ? $bill->get_latest_payment()->running_balance : $bill->balance;
+                                    $latest_payment = $bill->get_latest_payment() ? $bill->get_latest_payment()->date->format('m/d/Y') : "No Payment Recorded";
+                                    $running_balance = $bill->get_latest_payment() ? $bill->running_balance : $bill->balance;
                                     ?>
                                     <tr>
                                         <td><a target="_blank" href="<?php echo $bill->creditor_url; ?>"><?php echo $bill->creditor;?></a></td>
-                                        <td><?php echo $bill->type;?></td>
-                                        <td><?php echo "$".$bill->m_payment; ?></td>
-                                        <td><?php echo $bill->due_date;?></td>
+                                        <td><?php echo $bill->get_name_from_type($bill->type);?></td>
+                                        <td><?php echo "$".$bill->monthly_payment; ?></td>
+                                        <td><?php echo $this->BillTracker()->add_ordinal_number_suffix($bill->due_date);?></td>
                                         <td class="<?php echo $bill->get_latest_payment_class(); ?>"><?php echo $latest_payment; ?></td>
-                                        <td><?php echo $running_balance; ?></td>
+                                        <?php if($bill->debt_type == 0) { ?>
+                                            <td><?php echo $running_balance; ?></td>
+                                        <?php } else { ?>
+                                            <td>~</td>
+                                        <?php } ?>
                                         <td>
                                             <div class="dropdown">
                                                 <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown">

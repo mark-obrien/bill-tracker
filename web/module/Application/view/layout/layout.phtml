@@ -28,34 +28,43 @@
   </head>
 
   <body>
-
-  <div id="wrapper">
-
-  <!-- Navigation -->
-  <nav class="navbar navbar-default navbar-static-top" role="navigation">
-    <?php
-        if (isset($currentUser)) {
-            echo $this->partial('layout/navigation');
-            echo $this->partial('layout/sidebar');
-        }
-    ?>
-  </nav>
-
-  <div id="page-wrapper">
-
-      <div class="container">
+      <div class="container-fluid" id="wrapper">
+      <!-- Navigation -->
           <div class="row">
-              <div class="col-xs-12 flash-messages">
-                  <?php echo $this->partial('layout/flash'); ?>
+              <div class="col-sm-12">
+                  <nav class="navbar navbar-default navbar-static-top" role="navigation">
+                    <?php if (isset($currentUser)) { ?>
+                        <?php echo $this->partial('layout/navigation'); ?>
+                   <?php } ?>
+                  </nav>
               </div>
+              </div>
+              <?php if (isset($currentUser)) { ?>
+                  <div class="row">
+                      <div class="col-sm-2">
+                          <?php echo $this->partial('layout/sidebar'); ?>
+                      </div>
+                      <div class="col-sm-10" id="page-wrapper">
+                          <div class="row">
+                              <div class="col-xs-12 flash-messages">
+                                  <?php echo $this->partial('layout/flash'); ?>
+                              </div>
+                          </div>
+                          <?php echo $this->content; ?>
+                      </div>
+              <?php } else { ?>
+                  <div class="col-sm-12" id="page-wrapper">
+                      <div class="row">
+                          <div class="col-xs-12 flash-messages">
+                              <?php echo $this->partial('layout/flash'); ?>
+                          </div>
+                      </div>
+                      <?php echo $this->content; ?>
+                  </div>
+              <?php } ?>
           </div>
+          <!-- /#page-wrapper -->
       </div>
-
-     <?php echo $this->content; ?>
-
-  </div>
-  <!-- /#page-wrapper -->
-
-
-  </body>
+      <!-- /#wrapper -->
+      </body>
 </html>

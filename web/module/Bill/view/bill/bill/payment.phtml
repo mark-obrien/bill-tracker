@@ -2,17 +2,68 @@
 $title = 'Add new payment';
 $this->headTitle($title);
 ?>
-<h1><?php echo $this->escapeHtml($title); ?></h1>
+<div class="row">
+    <div class="col-lg-12">
+        <h1 class="page-header"><?php echo $this->escapeHtml($title); ?></h1>
+    </div>
+<!-- /.col-lg-12 -->
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        Payment Form
+                    </div>
+                    <div class="panel-body">
+                        <?php echo $this->partial('/form/payment.phtml', ['form' => $this->form]) ?>
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.col-sm-6 (nested) -->
+            </div>
+            <div class="col-sm-6">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <?php echo $bill->creditor; ?> Info
+                    </div>
+                    <div class="panel-body">
+                        <div class="list-group">
+                            <a href="#" class="list-group-item">
+                                <i class="fa fa-money fa-fw"></i> Balance
+                                    <span class="pull-right text-muted"><em>$<?php echo $bill->running_balance; ?></em>
+                                    </span>
+                            </a>
+                            <a href="#" class="list-group-item">
+                                <i class="fa fa-calendar fa-fw"></i> Due Date
+                                    <span class="pull-right text-muted"><em><?php echo $bill->due_date; ?></em>
+                                    </span>
+                            </a>
+                            <a href="#" class="list-group-item">
+                                <i class="fa fa-dollar fa-fw"></i> Monthly Payment
+                                    <span class="pull-right text-muted"><em>$<?php echo $bill->monthly_payment; ?></em>
+                                    </span>
+                            </a>
+                            <a href="#" class="list-group-item">
+                                <i class="fa fa-info fa-fw"></i> Latest Payment
+                                <?php if($bill->get_latest_payment()){ ?>
+                                    <span class="pull-right text-muted"><em>$<?php echo $bill->get_latest_payment()->amount; ?> on <?php echo $bill->get_latest_payment()->date->format('m/d/Y'); ?></em></span>
+                                <?php } else { ?>
+                                    <span class="pull-right text-muted"><em>No Payment Recorded</em></span>
+                                <?php } ?>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.col-sm-6 (nested) -->
+            </div>
+            <!-- /.row (nested) -->
+        </div>
+        <!-- /.panel -->
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
 
-<?php
-$form = $this->form;
-$form->setAttribute('action', $this->url('bill', array('action' => 'payment'), null, true));
-$form->prepare();
-
-echo $this->form()->openTag($form);
-echo $this->formHidden($form->get('id'));
-echo $this->formHidden($form->get('bill_id'));
-echo $this->formRow($form->get('amount'));
-echo $this->formInput($form->get('submit'));
-echo $this->form()->closeTag($form);
 

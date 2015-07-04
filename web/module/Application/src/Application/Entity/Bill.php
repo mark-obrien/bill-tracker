@@ -25,6 +25,39 @@ use DateTime;
  */
 class Bill implements InputFilterAwareInterface 
 {
+
+    const CREDIT_CARD = 0;
+    const STUDENT_LOAN = 1;
+    const AUTO_LOAN = 2;
+    const UTILITY = 3;
+    const MEDICAL = 4;
+    const MORTGAGE = 5;
+    const DAYCARE = 6;
+    const SPENDING_MONEY = 7;
+    const GAS = 8;
+    const INSURANCE = 9;
+
+    public static $types = array(
+        self::CREDIT_CARD => 'Credit Card',
+        self::STUDENT_LOAN => 'Student Loan',
+        self::AUTO_LOAN => 'Auto Loan',
+        self::UTILITY => 'Utility',
+        self::MEDICAL => 'Medical',
+        self::MORTGAGE => 'Mortgage',
+        self::DAYCARE => 'Daycare',
+        self::SPENDING_MONEY => 'Spending Money',
+        self::GAS => 'Gas',
+        self::INSURANCE => 'Insurance'
+    );
+
+    const FIXED_EXPENSE = 0;
+    const VARIABLE_EXPENSE = 2;
+
+    public static $debt_types = array(
+        self::FIXED_EXPENSE => 'Fixed Expense',
+        self::VARIABLE_EXPENSE => 'Variable Expense'
+    );
+
     protected $inputFilter;
   
     /**
@@ -33,6 +66,11 @@ class Bill implements InputFilterAwareInterface
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    protected $debt_type;
 
     /**
      * @ORM\Column(type="string")
@@ -45,19 +83,24 @@ class Bill implements InputFilterAwareInterface
     protected $creditor_url;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="integer")
      */
     protected $type;
 
     /**
      * @ORM\Column(type="decimal", scale=2, precision=10)
      */
-    protected $m_payment;
+    protected $monthly_payment;
 
     /**
      * @ORM\Column(type="decimal", scale=2, precision=10)
      */
     protected $balance;
+
+    /**
+     * @ORM\Column(type="decimal", scale=2, precision=10)
+     */
+    protected $running_balance;
 
     /**
      * @ORM\Column(type="string")
@@ -119,15 +162,21 @@ class Bill implements InputFilterAwareInterface
         $this->creditor = $data['creditor'];
         $this->creditor_url = $data['creditor_url'];
         $this->type = $data['type'];
+        $this->debt_type = $data['debt_type'];
         $this->due_date = $data['due_date'];
-        $this->m_payment = $data['m_payment'];
+        $this->monthly_payment = $data['monthly_payment'];
         $this->balance = $data['balance'];
+        $this->running_balance = $data['balance'];
     }
 
     public function get_payments(){
         $criteria = Criteria::create()
             ->orderBy(array("date" => Criteria::DESC));
         return $this->payments->matching($criteria);
+    }
+
+    public function update_running_balance(Payment $payment) {
+        $this->running_balance = $this->running_balance - $payment->amount;
     }
 
     public function get_latest_payment(){
@@ -139,9 +188,7 @@ class Bill implements InputFilterAwareInterface
             return $payment;
         }
 
-        else {
-            return 'No Payment Recorded';
-        }
+        return false;
     }
 
     public function get_latest_payment_class(){
@@ -201,6 +248,16 @@ class Bill implements InputFilterAwareInterface
         return "$".$balance;
     }
 
+    public static function get_name_from_type($id)
+    {
+        $name = "n/a";
+        if($id && array_key_exists($id, self::$types))
+        {
+            $name = self::$types[$id];
+        }
+        return $name;
+    }
+
     public function setInputFilter(InputFilterInterface $inputFilter)
     {
         throw new \Exception("Not used");
@@ -240,7 +297,7 @@ class Bill implements InputFilterAwareInterface
 
             $inputFilter->add(array(
                 'name'     => 'creditor_url',
-                'required' => true,
+                'required' => false,
                 'filters'  => array(
                     array('name' => 'StripTags'),
                     array('name' => 'StringTrim'),

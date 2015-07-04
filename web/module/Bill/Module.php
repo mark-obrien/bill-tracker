@@ -2,11 +2,16 @@
 
 namespace Bill;
 
-use Bill\Model\BillTable;
-use Bill\Model\paymentTable;
+use Zend\Mvc\ModuleRouteListener;
+use Zend\Mvc\MvcEvent;
 
 class Module
 {
+    public function getConfig()
+    {
+        return include __DIR__ . '/config/module.config.php';
+    }
+
     public function getAutoloaderConfig()
     {
         return array(
@@ -19,28 +24,5 @@ class Module
                 ),
             ),
         );
-    }
-    
-    public function getServiceConfig()
-    {
-        return array(
-            'factories' => array(
-                'Bill\Model\BillTable' =>  function($sm) {
-                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
-                    $table = new BillTable($dbAdapter);
-                    return $table;
-                },
-                'Bill\Model\PaymentTable' =>  function($sm) {
-                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
-                    $table = new PaymentTable($dbAdapter);
-                    return $table;
-                },
-            ),
-        );
-    }    
-
-    public function getConfig()
-    {
-        return include __DIR__ . '/config/module.config.php';
     }
 }

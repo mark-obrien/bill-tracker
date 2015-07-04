@@ -6,6 +6,7 @@ LICENSE.txt
 */**/README.md
 demos/
 extras/documentation
+vendor/
 #################
 # End Zend      #
 #################
@@ -15,6 +16,7 @@ extras/documentation
 *.ipr
 *.iws
 .idea/
+atlassian-ide-plugin.xml
 
 #====Netbeans====
 nbproject/

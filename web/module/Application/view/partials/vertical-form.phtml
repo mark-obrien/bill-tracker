@@ -1,0 +1,7 @@
+<div class="form-group <?php if($element->getAttribute('type') == 'hidden'){echo 'hidden';} ?>">
+    <label><?php echo $element->getLabel(); ?></label>
+    <?php echo $this->formElement($element); ?>
+    <?php if($this->formElementErrors($element)):?>
+        <span class="help-block text-danger"><?php echo $this->formElementErrors($element) ?></span>
+    <?php endif; ?>
+</div>
